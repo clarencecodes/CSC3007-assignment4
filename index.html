@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Covid Case Clusters in Singapore</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+    <svg></svg>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script>
+        let width = 800,
+            height = 800;
+
+        var svg = d3.select('svg').attr('viewBox', '0 0 ' + width + ' ' + height);
+
+        var links;
+        var nodes;
+
+        // Load external data
+        Promise.all([d3.json('links-sample.json'), d3.json('cases-sample.json')]).then(
+            data => {
+                // Data preprocessing
+                data[0].forEach(e => {
+                    e.source = e.infector;
+                    e.target = e.infectee;
+                });
+
+                console.log(data[0]); //links
+                console.log(data[1]); //cases
+
+                nodes = data[1]
+                links = data[0]
+
+                const nodeElements = svg.append('g')
+                    .selectAll('circle')
+                    .data(nodes)
+                    .enter().append('circle')
+                    .attr('r', 10)
+                    .attr('fill', getNodeColor)
+
+                const simulation = d3.forceSimulation(nodes)
+                    .force('charge', d3.forceManyBody().strength(-20))
+                    .force('center', d3.forceCenter(width / 2, height / 2))
+
+                simulation.force('link', d3.forceLink()
+                    .id(link => link.id)
+                    .strength(link => link.strength))
+
+                const linkElements = svg.append('g')
+                    .selectAll('line')
+                    .data(links)
+                    .enter().append('line')
+                    .attr('stroke-width', 1)
+                    .attr('stroke', '#E5E5E5')
+
+                simulation.on('tick', () => {
+                    nodeElements
+                        .attr('cx', node => node.x)
+                        .attr('cy', node => node.y)
+
+                    linkElements
+                        .attr('x1', link => getNode(link.source).x)
+                        .attr('y1', link => getNode(link.source).y)
+                        .attr('x2', link => getNode(link.target).x)
+                        .attr('y2', link => getNode(link.target).y);
+                })
+
+            }
+        );
+
+
+        function getNodeColor(node) {
+            return node.gender == "male" ? "blue" : "pink"
+        }
+
+        function getNode(id) {
+            for (const node of nodes) {
+                if (node.id == id) {
+                    return node;
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
