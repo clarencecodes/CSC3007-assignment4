@@ -6,8 +6,9 @@
     <title>Covid Case Clusters in Singapore</title>
 </head>
 
-<body style="font-family: Verdana, Geneva, Tahoma, sans-serif" ;>
-    <h1>Covid Case Clusters in Singapore</h1>
+<body style="font-family: Verdana, Geneva, Tahoma, sans-serif">
+    <h3 style="color: grey;">Covid Case Clusters in Singapore</h3>
+    <div class="tooltip" style="pointer-events: none;"></div>
     <svg></svg>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script>
@@ -48,7 +49,19 @@
                     .call(d3.drag()
                         .on("start", dragstarted)
                         .on("drag", dragged)
-                        .on("end", dragended));
+                        .on("end", dragended))
+                    .on("mouseover", (event, d) => {
+                        d3.select(".tooltip")
+                            .html("ID: " + d.id + "<br>Age: " + d.age + "<br>Gender: " + d.gender + "<br>Nationality: " + d.nationality + "<br>Occupation: " + d.occupation + "<br>Organization: " + d.organization + "<br>Date: " + d.date + "<br>Serology: " + d.serology + "<br>Vaccinated: " + d.vaccinated)
+                            .style("position", "absolute")
+                            .style("background", getNodeColor(d))
+                            .style("left", (event.pageX) + "px")
+                            .style("top", (event.pageY) + "px");
+                    })
+                    .on("mouseout", (event, d) => {
+                        d3.select(".tooltip")
+                            .text("");
+                    })
 
                 const xPosition = d3.scaleOrdinal()
                     .domain([0, 1, 2])
@@ -92,7 +105,7 @@
         );
 
         function getNodeColor(node) {
-            return node.gender == "male" ? "blue" : "pink"
+            return node.gender == "male" ? "#33CCFF" : "#FFCCFF"
         }
 
         function getNode(id) {
