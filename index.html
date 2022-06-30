@@ -7,9 +7,18 @@
 </head>
 
 <body style="font-family: Verdana, Geneva, Tahoma, sans-serif">
-    <h3 style="color: grey;">Covid Case Clusters in Singapore</h3>
+    <h2>Covid Case Clusters in Singapore</h2>
+    <h3 style="color: grey;">Unvaccinated > Partially Vaccinated (1 dose) > Fully Vaccinated (2 doses)</h3>
     <div class="tooltip" style="pointer-events: none;"></div>
     <svg></svg>
+    <div style="margin-left: 680px">
+        <h4>Legend</h4>
+        <svg height="50" width="90">
+            <circle cx="20" cy="25" r="15" stroke="grey" stroke-width="2" fill="#33CCFF" />
+            <circle cx="70" cy="25" r="15" stroke="grey" stroke-width="2" fill="#FFCCFF" />
+        </svg>
+        <h5>Male | Female</h5>
+    </div>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script>
         let width = 800,
